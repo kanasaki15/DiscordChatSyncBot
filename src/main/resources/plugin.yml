@@ -1,0 +1,5 @@
+name: DiscordChatSyncBot
+version: @version@
+main: xyz.n7mn.dev.discordchatsyncbot.DiscordChatSyncBot
+authors: [ 7mi_chan ]
+description: DiscordChatSyncBot
