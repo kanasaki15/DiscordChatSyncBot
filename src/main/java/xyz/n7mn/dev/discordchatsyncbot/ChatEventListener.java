@@ -157,7 +157,7 @@ class ChatEventListener implements Listener {
         text = text.replaceAll("wye", "ゑ");
 
         text = text.replaceAll("tsa", "つぁ");
-        text = text.replaceAll("tsa", "つぃ");
+        text = text.replaceAll("tsi", "つぃ");
         text = text.replaceAll("tsu", "つ");
         text = text.replaceAll("tse", "つぇ");
         text = text.replaceAll("tso", "つぉ");
