@@ -152,10 +152,22 @@ class ChatEventListener implements Listener {
         text = text.replaceAll("ttsu", "っつ");
         text = text.replaceAll("ttse", "っつぇ");
         text = text.replaceAll("ttso", "っつぉ");
+        text = text.replaceAll("ccha", "っちゃ");
+        text = text.replaceAll("cchi", "っち");
+        text = text.replaceAll("cchu", "っちゅ");
+        text = text.replaceAll("cche", "っちぇ");
+        text = text.replaceAll("ccho", "っちょ");
+        text = text.replaceAll("ttya", "っちゃ");
+        text = text.replaceAll("ttyi", "っちぃ");
+        text = text.replaceAll("ttyu", "っちゅ");
+        text = text.replaceAll("ttye", "っちぇ");
+        text = text.replaceAll("ttyo", "っちょ");
 
         text = text.replaceAll("wyi", "ゐ");
         text = text.replaceAll("wye", "ゑ");
 
+        text = text.replaceAll("nn", "ん");
+        
         text = text.replaceAll("tsa", "つぁ");
         text = text.replaceAll("tsi", "つぃ");
         text = text.replaceAll("tsu", "つ");
@@ -177,11 +189,6 @@ class ChatEventListener implements Listener {
         text = text.replaceAll("ttu","っつ");
         text = text.replaceAll("tte","って");
         text = text.replaceAll("tto","っと");
-        text = text.replaceAll("nna","っな");
-        text = text.replaceAll("nni","っに");
-        text = text.replaceAll("nnu","っぬ");
-        text = text.replaceAll("nne","っね");
-        text = text.replaceAll("nno","っの");
         text = text.replaceAll("hha","っは");
         text = text.replaceAll("hhi","っひ");
         text = text.replaceAll("hhu","っふ");
@@ -246,10 +253,14 @@ class ChatEventListener implements Listener {
         text = text.replaceAll("zyu", "じゅ");
         text = text.replaceAll("zyo", "じょ");
         text = text.replaceAll("ja", "じゃ");
+        text = text.replaceAll("ji","じ");
         text = text.replaceAll("ju", "じゅ");
+        text = text.replaceAll("je", "じぇ");
         text = text.replaceAll("jo", "じょ");
         text = text.replaceAll("kya", "きゃ");
+        text = text.replaceAll("kyi", "きぃ");
         text = text.replaceAll("kyu", "きゅ");
+        text = text.replaceAll("kye", "きぇ");
         text = text.replaceAll("kyo", "きょ");
         text = text.replaceAll("tya", "ちゃ");
         text = text.replaceAll("tyu", "ちゅ");
