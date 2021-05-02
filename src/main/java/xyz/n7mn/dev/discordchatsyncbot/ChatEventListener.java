@@ -24,7 +24,12 @@ import org.bukkit.plugin.Plugin;
 import java.awt.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Enumeration;
 
 class ChatEventListener implements Listener {
 
@@ -210,6 +215,13 @@ class ChatEventListener implements Listener {
         text = text.replaceAll("lle", "っぇ");
         text = text.replaceAll("llo", "っぉ");
         text = text.replaceAll("ltu", "っ");
+        text = text.replaceAll("zya", "じゃ");
+        text = text.replaceAll("zyu", "じゅ");
+        text = text.replaceAll("zyo", "じょ");
+        text = text.replaceAll("ja", "じゃ");
+        text = text.replaceAll("ju", "じゅ");
+        text = text.replaceAll("jo", "じょ");
+
 
         text = text.replaceAll("ka", "か");
         text = text.replaceAll("ki", "き");
@@ -261,6 +273,11 @@ class ChatEventListener implements Listener {
         text = text.replaceAll("le", "ぇ");
         text = text.replaceAll("lo", "ぉ");
         text = text.replaceAll("nn", "ん");
+        text = text.replaceAll("ga", "が");
+        text = text.replaceAll("gi", "ぎ");
+        text = text.replaceAll("gu", "ぐ");
+        text = text.replaceAll("ge", "げ");
+        text = text.replaceAll("go", "ご");
         text = text.replaceAll("za", "ざ");
         text = text.replaceAll("zi", "じ");
         text = text.replaceAll("zu", "ず");

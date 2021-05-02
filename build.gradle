@@ -32,6 +32,7 @@ dependencies {
 
     compile 'net.dv8tion:JDA:4.2.1_262'
     compile 'com.squareup.okhttp3:okhttp:4.9.0'
+    compile 'mysql:mysql-connector-java:8.0.23'
 
 }
 
