@@ -30,9 +30,9 @@ repositories {
 dependencies {
     compileOnly 'com.destroystokyo.paper:paper-api:1.12-R0.1-SNAPSHOT'
 
-    compile 'net.dv8tion:JDA:4.2.1_262'
+    compile 'net.dv8tion:JDA:4.3.0_300'
     compile 'com.squareup.okhttp3:okhttp:4.9.0'
-    compile 'mysql:mysql-connector-java:8.0.23'
+    compile 'mysql:mysql-connector-java:8.0.26'
 
 }
 

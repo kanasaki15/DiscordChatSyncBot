@@ -114,15 +114,24 @@ class ChatEventListener implements Listener {
             
             for (Player player : players){
 
-                int length = message.getContentRaw().length();
+                System.out.println(message.getContentDisplay());
+                int length = message.getContentDisplay().length();
                 if (length >= 100){
                     length = 100;
                 }
 
+                StringBuffer sb = new StringBuffer();
+                if (message.getAttachments().size() > 0){
+                    for (Message.Attachment file : message.getAttachments()){
+                        sb.append("\n");
+                        sb.append(file.getUrl());
+                    }
+                }
+
                 if (member.getNickname() != null){
-                    player.sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + message.getContentRaw().substring(0, length) + " (by " + member.getNickname()+")");
+                    player.sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + message.getContentDisplay().substring(0, length) + sb.toString() + " (by " + member.getNickname()+")");
                 } else {
-                    player.sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + message.getContentRaw().substring(0, length) + " (by " + author.getName()+")");
+                    player.sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + message.getContentDisplay().substring(0, length) + sb.toString() + " (by " + author.getName()+")");
                 }
 
             }
@@ -274,6 +283,7 @@ class ChatEventListener implements Listener {
         list.add(new Moji("lyu", "ゅ"));
         list.add(new Moji("lye", "ぇ"));
         list.add(new Moji("lyo", "ょ"));
+        list.add(new Moji("xtu", "っ"));
         list.add(new Moji("nn", "ん"));
         list.add(new Moji("ka", "か"));
         list.add(new Moji("ki", "き"));
