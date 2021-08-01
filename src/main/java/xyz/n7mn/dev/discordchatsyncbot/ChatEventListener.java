@@ -114,7 +114,7 @@ class ChatEventListener implements Listener {
             
             for (Player player : players){
 
-                System.out.println(message.getContentDisplay());
+                //System.out.println(message.getContentDisplay());
                 int length = message.getContentDisplay().length();
                 if (length >= 100){
                     length = 100;
