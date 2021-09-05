@@ -24,7 +24,7 @@ public final class DiscordChatSyncBot extends JavaPlugin {
                     .enableCache(CacheFlag.VOICE_STATE)
                     .enableCache(CacheFlag.EMOTE)
                     .setMemberCachePolicy(MemberCachePolicy.ALL)
-                    .setActivity(Activity.playing("TCT実施中！ IP : " + getConfig().getString("MCAddress")))
+                    .setActivity(Activity.playing(getConfig().getString("EventText") + " IP : " + getConfig().getString("MCAddress")))
                     .build();
 
 
