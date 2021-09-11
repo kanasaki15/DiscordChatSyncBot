@@ -84,14 +84,16 @@ class ChatEventListener implements Listener {
                 // TODO: サムネイルをスキンの頭にする
                 builder.setColor(Color.ORANGE);
                 builder.setAuthor(e.getPlayer().getName(),"https://mine.ly/"+e.getPlayer().getName());
-                builder.setThumbnail("");
+                //builder.setThumbnail("");
                 builder.setDescription("```"+message.replaceAll("`","｀")+"```");
 
-                if (!e.getPlayer().getName().startsWith(".")){
-                    jda.getGuildById("810725404545515561").getTextChannelById(plugin.getConfig().getString("SendChannelID")).sendMessage("").setEmbeds(builder.build()).queue();
+                if (e.getPlayer().getName().startsWith(".")){
+                    jda.getGuildById("810725404545515561").getTextChannelById(plugin.getConfig().getString("SendChannelID")).sendMessageEmbeds(builder.build()).queue();
                 } else {
-                    builder.setThumbnail("https://cravatar.eu/avatar/"+e.getPlayer().getName()+"/128.png");
-                    jda.getGuildById("810725404545515561").getTextChannelById(plugin.getConfig().getString("SendChannelID")).sendMessage("").setEmbeds(builder.build()).queue();
+                    String url = "https://cravatar.eu/avatar/"+e.getPlayer().getName()+"/64.png";
+                    //System.out.println(url);
+                    builder.setThumbnail(url);
+                    jda.getGuildById("810725404545515561").getTextChannelById(plugin.getConfig().getString("SendChannelID")).sendMessageEmbeds(builder.build()).queue();
                 }
 
             }).start();
