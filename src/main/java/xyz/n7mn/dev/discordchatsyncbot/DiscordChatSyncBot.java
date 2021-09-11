@@ -20,7 +20,7 @@ public final class DiscordChatSyncBot extends JavaPlugin {
 
         try {
             jda = JDABuilder.createLight(getConfig().getString("DiscordToken"), GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_EMOJIS)
-                    .addEventListeners(new BotListener())
+                    .addEventListeners(new BotListener(this))
                     .enableCache(CacheFlag.VOICE_STATE)
                     .enableCache(CacheFlag.EMOTE)
                     .setMemberCachePolicy(MemberCachePolicy.ALL)

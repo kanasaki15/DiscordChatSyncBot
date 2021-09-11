@@ -128,12 +128,14 @@ class ChatEventListener implements Listener {
                     }
                 }
 
-                if (member.getNickname() != null){
-                    player.sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + message.getContentDisplay().substring(0, length) + sb.toString() + " (by " + member.getNickname()+")");
-                } else {
-                    player.sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + message.getContentDisplay().substring(0, length) + sb.toString() + " (by " + author.getName()+")");
-                }
-
+                int finalLength = length;
+                Bukkit.getScheduler().runTask(plugin, ()->{
+                    if (member.getNickname() != null){
+                        player.sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + message.getContentDisplay().substring(0, finalLength) + sb.toString() + " (by " + member.getNickname()+")");
+                    } else {
+                        player.sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + message.getContentDisplay().substring(0, finalLength) + sb.toString() + " (by " + author.getName()+")");
+                    }
+                });
             }
 
         }).start();
