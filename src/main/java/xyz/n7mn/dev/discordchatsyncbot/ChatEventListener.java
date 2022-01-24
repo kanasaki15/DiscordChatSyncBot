@@ -3,6 +3,8 @@ package xyz.n7mn.dev.discordchatsyncbot;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
@@ -22,14 +24,14 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.awt.*;
+import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 class ChatEventListener implements Listener {
 
@@ -44,6 +46,14 @@ class ChatEventListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void AsyncPlayerChatEvent(AsyncPlayerChatEvent e){
         if (jda != null && jda.getStatus() == JDA.Status.CONNECTED){
+
+            if (e.isCancelled()){
+                if (plugin.getServer().getPluginManager().getPlugin("Trouble in Crafter Town") == null){
+                    // イベントキャンセルしてたら無視する (TCT以外)
+                    return;
+                }
+            }
+
             new Thread(()->{
 
                 String message = e.getMessage();
@@ -81,13 +91,47 @@ class ChatEventListener implements Listener {
 
                 EmbedBuilder builder = new EmbedBuilder();
 
-                // TODO: サムネイルをスキンの頭にする
                 builder.setColor(Color.ORANGE);
-                builder.setAuthor(e.getPlayer().getName(),"https://mine.ly/"+e.getPlayer().getName());
-                //builder.setThumbnail("");
+                if (!e.getPlayer().getName().startsWith(".")){
+                    builder.setAuthor(e.getPlayer().getName(),"https://mine.ly/"+e.getPlayer().getName());
+                } else {
+                    builder.setAuthor(e.getPlayer().getName().replaceAll("\\.","") + " (BE)");
+                }
                 builder.setDescription("```"+message.replaceAll("`","｀")+"```");
 
                 if (e.getPlayer().getName().startsWith(".")){
+
+                    // スキン取得されてるしな
+                    AtomicReference<String> skinURL = new AtomicReference<>("");
+                    String nmsVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+                    try {
+                        Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + nmsVersion + ".entity.CraftPlayer");
+                        Method getProfileMethod = craftPlayerClass.getMethod("getProfile");
+
+                        GameProfile profile = (GameProfile) getProfileMethod.invoke(e.getPlayer());
+                        Collection<Property> textures = profile.getProperties().get("textures");
+                        if (textures != null){
+                            textures.iterator().forEachRemaining(ac ->{
+                                if (ac.getName().equals("textures")){
+                                    String img_base64 = ac.getValue();
+                                    byte[] decode = Base64.getDecoder().decode(img_base64);
+                                    SkinClass json = new Gson().fromJson(new String(decode, StandardCharsets.UTF_8), SkinClass.class);
+
+                                    skinURL.set(json.getTextures().getSKIN().getUrl());
+
+                                }
+                            });
+
+
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    if (skinURL.get().length() != 0){
+                        // いまはskinURLには全部のスキン画像が出てくるので
+                        // 実際に鯖に入れるときはトリミングして合成して...みたいな処理を書く
+                        builder.setThumbnail(skinURL.get());
+                    }
                     jda.getGuildById("810725404545515561").getTextChannelById(plugin.getConfig().getString("SendChannelID")).sendMessageEmbeds(builder.build()).queue();
                 } else {
                     String url = "https://cravatar.eu/avatar/"+e.getPlayer().getName()+"/64.png";
@@ -388,23 +432,77 @@ class ChatEventListener implements Listener {
 
         return text;
     }
+
+    private class SkinClass {
+
+        private long timestamp;
+        private String profileId;
+        private String profileName;
+        private Skin textures;
+
+        public long getTimestamp() {
+            return timestamp;
+        }
+
+        public String getProfileId() {
+            return profileId;
+        }
+
+        public String getProfileName() {
+            return profileName;
+        }
+
+        public Skin getTextures() {
+            return textures;
+        }
+    }
+
+    private class Skin {
+        private SkinData SKIN;
+
+        public SkinData getSKIN() {
+            return SKIN;
+        }
+    }
+
+    private class SkinData {
+        private String url;
+        private SkinMeta metadata;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public SkinMeta getMetadata() {
+            return metadata;
+        }
+    }
+
+    private class SkinMeta {
+        private String model;
+
+        public String getModel() {
+            return model;
+        }
+    }
+
+    private class Moji{
+        private String key;
+        private String value;
+
+        public Moji(String key, String value){
+            this.key = key;
+            this.value = value;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
 }
 
 
-class Moji{
-    private String key;
-    private String value;
-
-    public Moji(String key, String value){
-        this.key = key;
-        this.value = value;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
-}

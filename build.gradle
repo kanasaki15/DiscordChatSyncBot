@@ -25,14 +25,26 @@ repositories {
         name 'm2-dv8tion'
         url 'https://m2.dv8tion.net/releases'
     }
+
+    maven {
+        name = 'opencollab-snapshot'
+        url = 'https://repo.opencollab.dev/maven-snapshots/'
+    }
+
+    maven {
+        name = 'minecraft-libraries'
+        url = 'https://libraries.minecraft.net/'
+    }
 }
 
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT'
 
-    compile 'net.dv8tion:JDA:4.3.0_315'
-    compile 'com.squareup.okhttp3:okhttp:4.9.1'
-    compile 'mysql:mysql-connector-java:8.0.26'
+    compile 'net.dv8tion:JDA:5.0.0-alpha.4'
+    compile 'com.squareup.okhttp3:okhttp:4.9.3'
+    compile 'mysql:mysql-connector-java:8.0.28'
+
+    compile 'com.mojang:authlib:1.5.21'
 
 }
 
