@@ -91,54 +91,47 @@ class ChatEventListener implements Listener {
 
                 EmbedBuilder builder = new EmbedBuilder();
 
+                // スキン取得されてるしな
+                AtomicReference<String> skinURL = new AtomicReference<>("");
+                String nmsVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+                try {
+                    Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + nmsVersion + ".entity.CraftPlayer");
+                    Method getProfileMethod = craftPlayerClass.getMethod("getProfile");
+
+                    GameProfile profile = (GameProfile) getProfileMethod.invoke(e.getPlayer());
+                    Collection<Property> textures = profile.getProperties().get("textures");
+                    if (textures != null){
+                        textures.iterator().forEachRemaining(ac ->{
+                            if (ac.getName().equals("textures")){
+                                String img_base64 = ac.getValue();
+                                byte[] decode = Base64.getDecoder().decode(img_base64);
+                                SkinClass json = new Gson().fromJson(new String(decode, StandardCharsets.UTF_8), SkinClass.class);
+
+                                skinURL.set(json.getTextures().getSKIN().getUrl());
+
+                            }
+                        });
+
+
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
                 builder.setColor(Color.ORANGE);
                 if (!e.getPlayer().getName().startsWith(".")){
                     builder.setAuthor(e.getPlayer().getName(),"https://mine.ly/"+e.getPlayer().getName());
                 } else {
                     builder.setAuthor(e.getPlayer().getName().replaceAll("\\.","") + " (BE)");
                 }
+
                 builder.setDescription("```"+message.replaceAll("`","｀")+"```");
-
-                if (e.getPlayer().getName().startsWith(".")){
-
-                    // スキン取得されてるしな
-                    AtomicReference<String> skinURL = new AtomicReference<>("");
-                    String nmsVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-                    try {
-                        Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + nmsVersion + ".entity.CraftPlayer");
-                        Method getProfileMethod = craftPlayerClass.getMethod("getProfile");
-
-                        GameProfile profile = (GameProfile) getProfileMethod.invoke(e.getPlayer());
-                        Collection<Property> textures = profile.getProperties().get("textures");
-                        if (textures != null){
-                            textures.iterator().forEachRemaining(ac ->{
-                                if (ac.getName().equals("textures")){
-                                    String img_base64 = ac.getValue();
-                                    byte[] decode = Base64.getDecoder().decode(img_base64);
-                                    SkinClass json = new Gson().fromJson(new String(decode, StandardCharsets.UTF_8), SkinClass.class);
-
-                                    skinURL.set(json.getTextures().getSKIN().getUrl());
-
-                                }
-                            });
-
-
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                    if (skinURL.get().length() != 0){
-                        // いまはskinURLには全部のスキン画像が出てくるので
-                        // 実際に鯖に入れるときはトリミングして合成して...みたいな処理を書く
-                        builder.setThumbnail(skinURL.get());
-                    }
-                    jda.getGuildById("810725404545515561").getTextChannelById(plugin.getConfig().getString("SendChannelID")).sendMessageEmbeds(builder.build()).queue();
-                } else {
-                    String url = "https://cravatar.eu/avatar/"+e.getPlayer().getName()+"/64.png";
-                    //System.out.println(url);
-                    builder.setThumbnail(url);
-                    jda.getGuildById("810725404545515561").getTextChannelById(plugin.getConfig().getString("SendChannelID")).sendMessageEmbeds(builder.build()).queue();
+                if (skinURL.get().length() > 0){
+                    builder.setThumbnail("https://skin.7mi.site/?url="+skinURL.get());
+                } else if (!e.getPlayer().getName().startsWith(".")) {
+                    builder.setThumbnail("https://cravatar.eu/avatar/"+e.getPlayer().getName()+"/64.png");
                 }
+                jda.getGuildById("810725404545515561").getTextChannelById(plugin.getConfig().getString("SendChannelID")).sendMessageEmbeds(builder.build()).queue();
 
             }).start();
         }
