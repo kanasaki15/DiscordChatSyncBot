@@ -27,9 +27,8 @@ import java.awt.*;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collection;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -90,6 +89,8 @@ class ChatEventListener implements Listener {
                 }
 
                 EmbedBuilder builder = new EmbedBuilder();
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                builder.setFooter(format.format(new Date()));
 
                 // スキン取得されてるしな
                 AtomicReference<String> skinURL = new AtomicReference<>("");
