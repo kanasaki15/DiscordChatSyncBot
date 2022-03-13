@@ -21,6 +21,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.awt.*;
@@ -40,6 +42,34 @@ class ChatEventListener implements Listener {
     public ChatEventListener(JDA jda, Plugin plugin){
         this.jda = jda;
         this.plugin = plugin;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void PlayerJoinEvent (PlayerJoinEvent e){
+        if (jda != null && jda.getStatus() == JDA.Status.CONNECTED){
+            new Thread(()->{
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setColor(Color.GREEN);
+                builder.setFooter(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                builder.setDescription(e.getPlayer().getName()+"さんが入室しました。 (" + plugin.getServer().getOnlinePlayers().size() + "人います。)");
+
+                jda.getGuildById(plugin.getConfig().getString("DiscordGuildID")).getTextChannelById(plugin.getConfig().getString("SendChannelID")).sendMessageEmbeds(builder.build()).queue();
+            }).start();
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void PlayerJoinEvent (PlayerQuitEvent e){
+        if (jda != null && jda.getStatus() == JDA.Status.CONNECTED){
+            new Thread(()->{
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setColor(Color.RED);
+                builder.setFooter(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                builder.setDescription(e.getPlayer().getName()+"さんが退出しました。 (" + (plugin.getServer().getOnlinePlayers().size() - 1) + "人います。)");
+
+                jda.getGuildById(plugin.getConfig().getString("DiscordGuildID")).getTextChannelById(plugin.getConfig().getString("SendChannelID")).sendMessageEmbeds(builder.build()).queue();
+            }).start();
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -132,7 +162,7 @@ class ChatEventListener implements Listener {
                 } else if (!e.getPlayer().getName().startsWith(".")) {
                     builder.setThumbnail("https://cravatar.eu/avatar/"+e.getPlayer().getName()+"/64.png");
                 }
-                jda.getGuildById("810725404545515561").getTextChannelById(plugin.getConfig().getString("SendChannelID")).sendMessageEmbeds(builder.build()).queue();
+                jda.getGuildById(plugin.getConfig().getString("DiscordGuildID")).getTextChannelById(plugin.getConfig().getString("SendChannelID")).sendMessageEmbeds(builder.build()).queue();
 
             }).start();
         }
@@ -177,9 +207,9 @@ class ChatEventListener implements Listener {
                 int finalLength = length;
                 Bukkit.getScheduler().runTask(plugin, ()->{
                     if (member.getNickname() != null){
-                        player.sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + message.getContentDisplay().substring(0, finalLength) + sb.toString() + " (by " + member.getNickname()+")");
+                        player.sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + message.getContentDisplay().substring(0, finalLength) + sb.toString() + ChatColor.RESET + " (by " + member.getNickname()+")");
                     } else {
-                        player.sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + message.getContentDisplay().substring(0, finalLength) + sb.toString() + " (by " + author.getName()+")");
+                        player.sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + message.getContentDisplay().substring(0, finalLength) + sb.toString() + ChatColor.RESET + " (by " + author.getName()+")");
                     }
                 });
             }
