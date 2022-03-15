@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import okhttp3.OkHttpClient;
@@ -53,7 +54,10 @@ class ChatEventListener implements Listener {
                 builder.setFooter(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
                 builder.setDescription(e.getPlayer().getName()+"さんが入室しました。 (" + plugin.getServer().getOnlinePlayers().size() + "人います。)");
 
-                jda.getGuildById(plugin.getConfig().getString("DiscordGuildID")).getTextChannelById(plugin.getConfig().getString("SendChannelID")).sendMessageEmbeds(builder.build()).queue();
+                TextChannel channel = jda.getGuildById(plugin.getConfig().getString("DiscordGuildID")).getTextChannelById(plugin.getConfig().getString("SendChannelID"));
+                channel.sendMessageEmbeds(builder.build()).queue();
+                channel.getManager().setTopic(plugin.getServer().getOnlinePlayers().size() + " / " + plugin.getServer().getMaxPlayers()).queue();
+
             }).start();
         }
     }
@@ -67,7 +71,10 @@ class ChatEventListener implements Listener {
                 builder.setFooter(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
                 builder.setDescription(e.getPlayer().getName()+"さんが退出しました。 (" + (plugin.getServer().getOnlinePlayers().size() - 1) + "人います。)");
 
-                jda.getGuildById(plugin.getConfig().getString("DiscordGuildID")).getTextChannelById(plugin.getConfig().getString("SendChannelID")).sendMessageEmbeds(builder.build()).queue();
+                TextChannel channel = jda.getGuildById(plugin.getConfig().getString("DiscordGuildID")).getTextChannelById(plugin.getConfig().getString("SendChannelID"));
+                channel.sendMessageEmbeds(builder.build()).queue();
+                channel.getManager().setTopic((plugin.getServer().getOnlinePlayers().size() - 1) + " / " + plugin.getServer().getMaxPlayers()).queue();
+
             }).start();
         }
     }
