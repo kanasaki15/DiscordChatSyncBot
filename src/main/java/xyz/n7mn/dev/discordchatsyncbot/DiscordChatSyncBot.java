@@ -3,6 +3,7 @@ package xyz.n7mn.dev.discordchatsyncbot;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
@@ -27,7 +28,6 @@ public final class DiscordChatSyncBot extends JavaPlugin {
                     .setActivity(Activity.playing(getConfig().getString("EventText") + " IP : " + getConfig().getString("MCAddress")))
                     .build();
 
-
             Bukkit.getPluginManager().registerEvents(new ChatEventListener(jda, this), this);
         } catch (Exception e){
             e.printStackTrace();
@@ -45,6 +45,9 @@ public final class DiscordChatSyncBot extends JavaPlugin {
         }
 
         try {
+            TextChannel channel = jda.getGuildById(getConfig().getString("DiscordGuildID")).getTextChannelById(getConfig().getString("SendChannelID"));
+            channel.getManager().setTopic("").queue();
+
             jda.shutdown();
         } catch (Exception e){
             // e.printStackTrace();
