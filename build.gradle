@@ -40,9 +40,9 @@ repositories {
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT'
 
-    compile 'net.dv8tion:JDA:5.0.0-alpha.9'
-    compile 'com.squareup.okhttp3:okhttp:4.9.3'
-    compile 'mysql:mysql-connector-java:8.0.28'
+    compile 'net.dv8tion:JDA:5.0.0-alpha.19'
+    compile 'com.squareup.okhttp3:okhttp:4.10.0'
+    compile 'mysql:mysql-connector-java:8.0.30'
 
     compile 'com.mojang:authlib:1.5.21'
 

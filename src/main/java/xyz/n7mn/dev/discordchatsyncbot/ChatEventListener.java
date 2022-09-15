@@ -5,12 +5,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import jdk.nashorn.internal.scripts.JD;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -22,6 +23,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
@@ -56,7 +58,7 @@ class ChatEventListener implements Listener {
 
                 TextChannel channel = jda.getGuildById(plugin.getConfig().getString("DiscordGuildID")).getTextChannelById(plugin.getConfig().getString("SendChannelID"));
                 channel.sendMessageEmbeds(builder.build()).queue();
-                channel.getManager().setTopic(plugin.getServer().getOnlinePlayers().size() + " / " + plugin.getServer().getMaxPlayers()).queue();
+                //channel.getManager().setTopic(plugin.getServer().getOnlinePlayers().size() + " / " + plugin.getServer().getMaxPlayers()).queue();
 
             }).start();
         }
@@ -73,7 +75,7 @@ class ChatEventListener implements Listener {
 
                 TextChannel channel = jda.getGuildById(plugin.getConfig().getString("DiscordGuildID")).getTextChannelById(plugin.getConfig().getString("SendChannelID"));
                 channel.sendMessageEmbeds(builder.build()).queue();
-                channel.getManager().setTopic((plugin.getServer().getOnlinePlayers().size() - 1) + " / " + plugin.getServer().getMaxPlayers()).queue();
+                //channel.getManager().setTopic((plugin.getServer().getOnlinePlayers().size() - 1) + " / " + plugin.getServer().getMaxPlayers()).queue();
 
             }).start();
         }
@@ -175,6 +177,60 @@ class ChatEventListener implements Listener {
         }
     }
 
+    public void PlayerCommandPreprocessEvent (PlayerCommandPreprocessEvent e){
+        if (!plugin.getConfig().getBoolean("SendCommand")){
+            return;
+        }
+        String message = e.getMessage();
+
+        EmbedBuilder builder = new EmbedBuilder();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        builder.setFooter(format.format(new Date()));
+
+        // スキン取得されてるしな
+        AtomicReference<String> skinURL = new AtomicReference<>("");
+        String nmsVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        try {
+            Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + nmsVersion + ".entity.CraftPlayer");
+            Method getProfileMethod = craftPlayerClass.getMethod("getProfile");
+
+            GameProfile profile = (GameProfile) getProfileMethod.invoke(e.getPlayer());
+            Collection<Property> textures = profile.getProperties().get("textures");
+            if (textures != null){
+                textures.iterator().forEachRemaining(ac ->{
+                    if (ac.getName().equals("textures")){
+                        String img_base64 = ac.getValue();
+                        byte[] decode = Base64.getDecoder().decode(img_base64);
+                        SkinClass json = new Gson().fromJson(new String(decode, StandardCharsets.UTF_8), SkinClass.class);
+
+                        skinURL.set(json.getTextures().getSKIN().getUrl());
+
+                    }
+                });
+
+
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        builder.setColor(Color.ORANGE);
+        if (!e.getPlayer().getName().startsWith(".")){
+            builder.setAuthor(e.getPlayer().getName(),"https://mine.ly/"+e.getPlayer().getName());
+        } else {
+            builder.setAuthor(e.getPlayer().getName().replaceAll("\\.","") + " (BE)");
+        }
+
+        builder.setDescription("```"+message.replaceAll("`","｀")+"```");
+        if (skinURL.get().length() > 0){
+            builder.setThumbnail("https://skin.7mi.site/?url="+skinURL.get());
+        } else if (!e.getPlayer().getName().startsWith(".")) {
+            builder.setThumbnail("https://cravatar.eu/avatar/"+e.getPlayer().getName()+"/64.png");
+        }
+        jda.getGuildById(plugin.getConfig().getString("DiscordGuildID")).getTextChannelById(plugin.getConfig().getString("SendChannelID")).sendMessageEmbeds(builder.build()).queue();
+
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void OnMessageReceivedEvent (OnMessageReceivedEvent e){
         MessageReceivedEvent event = e.getEventMessageReceivedEvent();
@@ -190,7 +246,7 @@ class ChatEventListener implements Listener {
                 return;
             }
 
-            if (!message.getTextChannel().getId().equals(plugin.getConfig().getString("ReceptionChannelID"))){
+            if (!message.getChannel().getId().equals(plugin.getConfig().getString("ReceptionChannelID"))){
                 return;
             }
 
