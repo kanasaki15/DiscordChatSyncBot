@@ -1,8 +1,9 @@
 package xyz.n7mn.dev.discordchatsyncbot;
 
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.events.ReadyEvent;
+
+import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -24,9 +25,11 @@ class BotListener extends ListenerAdapter {
     }
 
     @Override
-    public void onReady(@NotNull ReadyEvent event) {
-        //TextChannel channel = event.getJDA().getGuildById(plugin.getConfig().getString("DiscordGuildID")).getTextChannelById(plugin.getConfig().getString("SendChannelID"));
-        //channel.getManager().setTopic(plugin.getServer().getOnlinePlayers().size() + " / " + plugin.getServer().getMaxPlayers()).queue();
+    public void onGenericEvent(GenericEvent event) {
+        if (event instanceof ReadyEvent){
+            //TextChannel channel = event.getJDA().getGuildById(plugin.getConfig().getString("DiscordGuildID")).getTextChannelById(plugin.getConfig().getString("SendChannelID"));
+            //channel.getManager().setTopic(plugin.getServer().getOnlinePlayers().size() + " / " + plugin.getServer().getMaxPlayers()).queue();
+        }
     }
 }
 
