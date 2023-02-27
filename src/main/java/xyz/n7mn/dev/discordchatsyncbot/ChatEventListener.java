@@ -250,29 +250,30 @@ class ChatEventListener implements Listener {
                 return;
             }
 
-            
+            StringBuffer sb = new StringBuffer();
+
+            sb.append(message.getContentRaw().substring(0, Math.min(message.getContentRaw().length(), 100)));
+
+            if (message.getAttachments().size() > 0){
+                for (Message.Attachment file : message.getAttachments()){
+                    sb.append("\n");
+                    sb.append(file.getUrl());
+                }
+            }
+
+            if (member.getNickname() != null){
+                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + sb.toString() + ChatColor.RESET + " (by " + member.getNickname()+")");
+            } else {
+                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + sb.toString() + ChatColor.RESET + " (by " + author.getName()+")");
+            }
+
             for (Player player : players){
 
-                //System.out.println(message.getContentDisplay());
-                int length = message.getContentDisplay().length();
-                if (length >= 100){
-                    length = 100;
-                }
-
-                StringBuffer sb = new StringBuffer();
-                if (message.getAttachments().size() > 0){
-                    for (Message.Attachment file : message.getAttachments()){
-                        sb.append("\n");
-                        sb.append(file.getUrl());
-                    }
-                }
-
-                int finalLength = length;
                 Bukkit.getScheduler().runTask(plugin, ()->{
                     if (member.getNickname() != null){
-                        player.sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + message.getContentDisplay().substring(0, finalLength) + sb.toString() + ChatColor.RESET + " (by " + member.getNickname()+")");
+                        player.sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + message.getContentDisplay().substring(0, 100) + sb.toString() + ChatColor.RESET + " (by " + member.getNickname()+")");
                     } else {
-                        player.sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + message.getContentDisplay().substring(0, finalLength) + sb.toString() + ChatColor.RESET + " (by " + author.getName()+")");
+                        player.sendMessage(ChatColor.AQUA + "[Discord] " + ChatColor.RESET + message.getContentDisplay().substring(0, 100) + sb.toString() + ChatColor.RESET + " (by " + author.getName()+")");
                     }
                 });
             }
